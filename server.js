@@ -42,7 +42,6 @@ sio.sockets.on('connection', function (socket) {
 
     res.on('error', function(err) {
       console.log("Error during HTTP request");
-      //console.log(err);
     });
   });
 });

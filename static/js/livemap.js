@@ -13,17 +13,51 @@ $(document).ready(function(){
 
    var socket = io.connect('/');
 
+
+
+   function setStyle(layer) {
+
+   }
+
    socket.on('earthquakes', function (data) {
      var points = data.points;
-     var geojsonLayer = new L.GeoJSON(points);
-     geojsonLayer.on("featureparse", function (e) {
-       if (e.properties && e.properties.place){
+
+     //var geojsonLayer = new L.GeoJSON(points);
+
+
+     var geojsonMarkerOptions = {
+        radius: 8,
+        fillColor: "#ff7800",
+        color: "#000",
+        weight: 1,
+        opacity: 1,
+        fillOpacity: 0.8
+    };
+
+    var geojsonLayer = new L.GeoJSON(points, {
+        pointToLayer: function (latlng) {
+          return new L.CircleMarker(latlng, geojsonMarkerOptions);
+        }
+    });
+
+
+    geojsonLayer.on("featureparse", function (e) {
+       if (e.properties && e.properties.place && e.layer.setStyle) {
          var date = new Date(e.properties.time * 1000);
          e.layer.bindPopup(e.properties.place + '<br />' + date);
+         if (e.properties) {
+          var mag = e.properties.mag;
+          if (mag > 5) {
+            console.log(e.layer);
+            e.layer.options.fillColor = '#FF0000'
+            e.layer.options.radius = 20;
+          }
+         }
+         //e.layer.options.color = '#ffffff';
        }
      }); 
+
      geojsonLayer.addGeoJSON(points);
-    
      map.addLayer(geojsonLayer);
    });
 
