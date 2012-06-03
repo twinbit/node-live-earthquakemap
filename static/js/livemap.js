@@ -6,8 +6,12 @@ $(document).ready(function(){
    });
    
    var europe = new L.LatLng(38, 30); // geographical point (longitude and latitude)
+   var italy =  new L.LatLng(42.779275,12.733154);
+   var modena = new L.LatLng(44.648628,10.912857);
+   
    map.setView(europe, 4).addLayer(cloudmade);
-	
+
+
    var geojsonLayer = new L.GeoJSON();
    map.addLayer(geojsonLayer);
 
@@ -72,18 +76,9 @@ $(document).ready(function(){
          e.layer.bindPopup('Place : ' + e.properties.place + '<br />' + 'Date : ' + date +  '<br />' + 'Magnitude : ' + e.properties.mag);
 
          if (e.properties) {
-          var mag = e.properties.mag;
-          if (mag > 5) {
-
-            var Styler = new setStyle(e.layer, e.properties);
-            e.layer = Styler.config();
-
-            /*
-            e.layer.options.fillColor = '#FF0000'
-            e.layer.options.weight = 2;
-            e.layer.setRadius(12);
-            */
-          }
+           var mag = e.properties.mag;
+           var Styler = new setStyle(e.layer, e.properties);
+           e.layer = Styler.config();
          }
        }
 
