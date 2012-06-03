@@ -6,8 +6,12 @@ $(document).ready(function(){
    });
    
    var europe = new L.LatLng(38, 30); // geographical point (longitude and latitude)
+   var italy =  new L.LatLng(42.779275,12.733154);
+   var modena = new L.LatLng(44.648628,10.912857);
+   
    map.setView(europe, 4).addLayer(cloudmade);
-	
+
+
    var geojsonLayer = new L.GeoJSON();
    map.addLayer(geojsonLayer);
 
