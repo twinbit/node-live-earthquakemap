@@ -14,16 +14,35 @@ $(document).ready(function(){
    var socket = io.connect('/');
 
 
+   // layer styler object
+   // ex: http://stackoverflow.com/questions/3913103/javascript-object-literal-pattern-with-multiple-instances
+   var setStyle = function(layer) {
+      var Styler =  {
+        init: function() {
+          this.layer = layer;
+        },
 
-   function setStyle(layer) {
+        setRadius: function() {
+          this.layer.setRadius(20);
+        },
 
+        setColor: function(color) {
+          this.style = color;
+        },
+
+        config: function() {
+          console.log(this.layer);
+        }
+      }
+
+      Styler.init();
+      return Styler;
    }
 
    socket.on('earthquakes', function (data) {
      var points = data.points;
 
      //var geojsonLayer = new L.GeoJSON(points);
-
 
      var geojsonMarkerOptions = {
         radius: 8,
@@ -40,10 +59,8 @@ $(document).ready(function(){
         }
     });
 
-
     geojsonLayer.on("featureparse", function (e) {
        if (e.properties && e.properties.place) {
-         console.log(e.layer);
 
          // popup content
          var date = new Date(e.properties.time * 1000);
@@ -52,11 +69,20 @@ $(document).ready(function(){
          if (e.properties) {
           var mag = e.properties.mag;
           if (mag > 5) {
+
+            var Styler = new setStyle(e.layer);
+            Styler.config();
+
+            /*
             e.layer.options.fillColor = '#FF0000'
-            e.layer.setRadius(20);
+            e.layer.options.weight = 2;
+            e.layer.setRadius(12);
+            */
           }
          }
        }
+
+
      }); 
 
      geojsonLayer.addGeoJSON(points);
