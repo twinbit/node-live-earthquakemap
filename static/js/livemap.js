@@ -42,18 +42,20 @@ $(document).ready(function(){
 
 
     geojsonLayer.on("featureparse", function (e) {
-       if (e.properties && e.properties.place && e.layer.setStyle) {
+       if (e.properties && e.properties.place) {
+         console.log(e.layer);
+
+         // popup content
          var date = new Date(e.properties.time * 1000);
          e.layer.bindPopup(e.properties.place + '<br />' + date);
+
          if (e.properties) {
           var mag = e.properties.mag;
           if (mag > 5) {
-            console.log(e.layer);
             e.layer.options.fillColor = '#FF0000'
-            e.layer.options.radius = 20;
+            e.layer.setRadius(20);
           }
          }
-         //e.layer.options.color = '#ffffff';
        }
      }); 
 
