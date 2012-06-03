@@ -16,10 +16,11 @@ $(document).ready(function(){
 
    // layer styler object
    // ex: http://stackoverflow.com/questions/3913103/javascript-object-literal-pattern-with-multiple-instances
-   var setStyle = function(layer) {
+   var setStyle = function(layer, properties) {
       var Styler =  {
         init: function() {
           this.layer = layer;
+          this.properties = properties;
         },
 
         setRadius: function() {
@@ -31,7 +32,12 @@ $(document).ready(function(){
         },
 
         config: function() {
-          console.log(this.layer);
+          options = this.layer.options;
+          if (properties.mag > 5) {
+            this.layer.options.fillColor = '#FF0000'
+            this.layer.options.weight = 2;
+            this.layer.setRadius(12);
+          }
         }
       }
 
@@ -69,8 +75,8 @@ $(document).ready(function(){
           var mag = e.properties.mag;
           if (mag > 5) {
 
-            var Styler = new setStyle(e.layer);
-            Styler.config();
+            var Styler = new setStyle(e.layer, e.properties);
+            e.layer = Styler.config();
 
             /*
             e.layer.options.fillColor = '#FF0000'
