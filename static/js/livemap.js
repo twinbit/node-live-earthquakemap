@@ -43,11 +43,11 @@ $(document).ready(function(){
 
     geojsonLayer.on("featureparse", function (e) {
        if (e.properties && e.properties.place) {
-         console.log(e.layer);
+         //console.log(e);
 
          // popup content
          var date = new Date(e.properties.time * 1000);
-         e.layer.bindPopup(e.properties.place + '<br />' + date);
+         e.layer.bindPopup('Place : ' + e.properties.place + '<br />' + 'Date : ' + date +  '<br />' + 'Magnitude : ' + e.properties.mag);
 
          if (e.properties) {
           var mag = e.properties.mag;
