@@ -1,4 +1,4 @@
-var app = require('./app').init(4000);
+var app = require('./app').init(8000);
 var io  = require('socket.io');
 var sio = io.listen(app);
 var http = require('http');
