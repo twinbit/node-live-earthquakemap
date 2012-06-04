@@ -19,14 +19,37 @@ app.get('/*', function(req, res){
     res.render('404.ejs', locals);
 });
 
-// get the data from: http://earthquake.usgs.gov/earthquakes/feed/
-sio.sockets.on('connection', function (socket) {
+
+
+var getFeed = function(data, f) {
+  var path;
+  if (data == 'all') {
+    path = '/earthquakes/feed/geojson/2.5/month'
+  }
+  else if (data == 'week') {
+    path = '/earthquakes/feed/geojson/1.0/week';
+  }
+  else if (data == 'hour') {
+    path = '/earthquakes/feed/geojson/all/hour';
+  }
+  else if (data == 'day') {
+    path = '/earthquakes/feed/geojson/all/day';
+  }
+
   var options = {
     host: 'earthquake.usgs.gov',
     port: 80,
-    path: '/earthquakes/feed/geojson/2.5/month',
+    path: path,
     verb: 'GET'
   };
+  /* http://www.geonet.org.nz/resources/earthquake/quake-web-services.html
+  var options = {
+    host: 'magma.geonet.org.nz',
+    port: 80,
+    path: (data == 'all' ? '/services/quake/geojson/quake?numberDays=1' : '/earthquakes/feed/geojson/all/hour'),
+    verb: 'GET'
+  };
+  */
 
   http.get(options, function(res) {
     var data = '';
@@ -37,11 +60,26 @@ sio.sockets.on('connection', function (socket) {
 
     res.on('end',function(err) {
       var obj = JSON.parse(data);
-      socket.emit('earthquakes', { points: obj });
+      f(obj);
     })
 
     res.on('error', function(err) {
       console.log("Error during HTTP request");
     });
   });
+}
+
+
+// get the data from: http://earthquake.usgs.gov/earthquakes/feed/
+sio.sockets.on('connection', function (socket) {
+  getFeed('all', function(obj) {
+     socket.emit('earthquakes', { points: obj });
+  })
+
+  socket.on('time', function (data) {
+    getFeed(data, function(obj) {
+      socket.emit('earthquakes', { points: obj });
+    })
+  });
+
 });

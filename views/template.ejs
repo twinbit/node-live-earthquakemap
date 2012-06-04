@@ -8,9 +8,13 @@
       </a>
       <a class="brand" href="#"><%= title %></a>
       <div class="nav-collapse">
-        <ul class="nav">
-          <li class="active"><a href="/map">Map</a></li>
-          <li><a href="/about">About</a></li>
+        <ul id="main-menu" class="nav">
+          <li class="active"><a data-time="all" href="/map">Past 30 days</a></li>
+          <li><a data-time="week" href="#today">Past 7 days</a></li>
+          <li><a data-time="day" href="#today">Past day</a></li>
+          <li><a data-time="hour" href="#lasthour">Past hour</a></li>
+          <li><a href="#last">Zoom to last earthquake</a></li>
+          <!-- <li><a href="/about">About</a></li> -->
         </ul>
       </div><!--/.nav-collapse -->
     </div>
