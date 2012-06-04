@@ -3,6 +3,11 @@ $(document).ready(function() {
    var geojsonLayer, circles; 
    var last_time = false;
 
+   var europe = new L.LatLng(38, 30); // geographical point (longitude and latitude)
+   var italy =  new L.LatLng(42.779275,12.733154);
+   var modena = new L.LatLng(44.648628,10.912857);
+   var world = new L.LatLng(0, 0);
+   var cloudmade;
 
    var createMap = function() {
      var map = new L.Map('map');
@@ -15,16 +20,10 @@ $(document).ready(function() {
        map_id = 997;
      }
 
-     var cloudmade = new L.TileLayer('http://{s}.tile.cloudmade.com/8618631df8af451ba9fcbc0d9fb7788d/' + map_id + '/256/{z}/{x}/{y}.png', {
+     cloudmade = new L.TileLayer('http://{s}.tile.cloudmade.com/8618631df8af451ba9fcbc0d9fb7788d/' + map_id + '/256/{z}/{x}/{y}.png', {
            attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>',
            maxZoom: 18
      });
-       
-     var europe = new L.LatLng(38, 30); // geographical point (longitude and latitude)
-     var italy =  new L.LatLng(42.779275,12.733154);
-     var modena = new L.LatLng(44.648628,10.912857);
-     var world = new L.LatLng(0, 0);
-
 
      map.setView(world, 2, true).addLayer(cloudmade);
      return map;
@@ -51,13 +50,16 @@ $(document).ready(function() {
       socket.emit('time', time);
     }
     else {
-      layer = last_time;
+/*      layer = last_time;
       coords = last_time.geometry.coordinates;
       lat = parseFloat(coords[1]),
       lng = parseFloat(coords[0]);
 
       var latlng = new L.LatLng(lat, lng, true);
-      map.panTo(latlng);
+      */
+      //map.panTo(modena);
+      map.setView(modena, 9, true).addLayer(cloudmade);
+      //map.setZoom(4;
     }
    });
 
