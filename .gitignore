@@ -1,7 +1,7 @@
 # Project folders #
 ###################
-node_modules/
 ildn_reverse_tunnel.sh
+
 # OS generated files #
 ######################
 .DS_Store*
@@ -22,6 +22,5 @@ pids
 logs
 results
 
-node_modules
 npm-debug.log
 /nbproject/
