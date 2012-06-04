@@ -9,11 +9,12 @@ $(document).ready(function() {
    var world = new L.LatLng(0, 0);
    var cloudmade;
 
+   // create map function
    var createMap = function() {
      var map = new L.Map('map');
 
      var hour = new Date().getHours();
-     if ((hour >= 22 && hour <= 24) || (hour >= 1 && hour <= 7)) {
+     if ((hour >= 22 && hour <= 24) || (hour >= 0 && hour <= 7)) {
        map_id = 999;
      }
      else {
@@ -105,6 +106,8 @@ $(document).ready(function() {
       return Styler;
    }
 
+
+   /* Earthquake updates */
    socket.on('earthquakes', function (data) {
      var points = data.points;
 
@@ -154,7 +157,19 @@ $(document).ready(function() {
      map.addLayer(geojsonLayer);
      map.addLayer(circles);
    });
+  
 
+   // Twitter streaming
+   socket.on('tweet', function (data) {
+     tweet = data.tweet;
+     if (tweet.coordinates) {
+      console.log(tweet);
+     }
+     else {
+      console.log('tweet non geolocalizzato');
+     }
+   });
+  
 
 });
 
