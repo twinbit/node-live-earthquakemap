@@ -23,7 +23,23 @@
 
 <div class="container-fluid">
   <div id="map"></div>
-  
+  <div id="warning" class="modal">
+      <div class="modal-header">
+        <h3>Welcome to Live Earthquakes Map </h3>
+        <a onclick="javascript:$('#warning').hide();" class="close" href="#">×</a>
+      </div>
+      <div class="modal-body">
+        <p>Welcome! Please keep in mind that this is just only a very quick experiments to get live earthquakes events on a map, using Node.js, Socket.io, Express and Leaflet map engine. </p>
+        <p> You can find code here: <a href="https://github.com/twinbit/node-live-earthquakemap">https://github.com/twinbit/node-live-earthquakemap</a></p>
+        <p> Inspiration taken from: <a href="http://ulmapi-de.no.de/map">http://ulmapi-de.no.de/map </a> </p>
+        <p> Please feel free to contribute and keep in touch with us: <a href="http://www.twitter.com/twinbit"> @twinbit </a>
+      </div>
+      <div class="modal-footer">
+        <a class="btn primary" href="#" onclick="javascript:$('#warning').hide();">Close</a>
+      </div>
+    </div>
+
+
   <footer>
     <p>&copy; Company 2012</p>
   </footer>

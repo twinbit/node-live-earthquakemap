@@ -4,9 +4,9 @@ var sio = io.listen(app);
 var http = require('http');
 
 var locals = {
-        title: 		 'Earthquake live map',
-        description: 'Eartquake live maps built with nodejs',
-        author: 	 'Paolo Mainardi'
+        title: 		 'Live Earthquakes Map',
+        description: 'Live Earthquakes Map built with nodejs + leaflet',
+        author: 	 'Paolo Mainardi - Twinbit - http://www.twinbit.it'
     };
 
 app.get('/', function(req,res) {
