@@ -2,7 +2,34 @@ var app = require('./app').init(8000);
 var io  = require('socket.io');
 var sio = io.listen(app);
 var http = require('http');
+var twitter = require('tuiter');
 
+
+// Twitter client
+var twit = new twitter({
+  'consumer_key': 'GJmAMUrCRjG8dulCdqs0Q',
+  'consumer_secret': 'LGNIXaskuQpwcvGi3rg3FjngQnIjb5OYeUzcYk7TE',
+  'access_token_key': '9241712-L92IKTYb5hYSI57FNM82ngX5yFCCJfPpPfPxBwDkSa',
+  'access_token_secret': 'fbhyhLExUMNij6QhCsMrmxYzhZQczKj72c23oUkk2Q'
+});
+
+
+// get twitter stream feed
+var getTweet = function(f) {
+   twit.filter({track: ['#earthquake', '#terremoto']}, function(stream){
+    stream.on('data', function(data){
+      f(data);
+    });
+
+    stream.on('error', function(err){
+      // do nothing
+      console.log(err);
+    });
+  });
+}
+
+
+/* Application configuration */
 var locals = {
         title: 		 'Live Earthquakes Map',
         description: 'Live Earthquakes Map built with nodejs + leaflet',
@@ -20,7 +47,7 @@ app.get('/*', function(req, res){
 });
 
 
-
+/* Get remote feed function */
 var getFeed = function(data, f) {
   var path;
   if (data == 'all') {
@@ -42,14 +69,6 @@ var getFeed = function(data, f) {
     path: path,
     verb: 'GET'
   };
-  /* http://www.geonet.org.nz/resources/earthquake/quake-web-services.html
-  var options = {
-    host: 'magma.geonet.org.nz',
-    port: 80,
-    path: (data == 'all' ? '/services/quake/geojson/quake?numberDays=1' : '/earthquakes/feed/geojson/all/hour'),
-    verb: 'GET'
-  };
-  */
 
   http.get(options, function(res) {
     var data = '';
@@ -74,6 +93,13 @@ var getFeed = function(data, f) {
 sio.sockets.on('connection', function (socket) {
   getFeed('all', function(obj) {
      socket.emit('earthquakes', { points: obj });
+
+     // start sending tweets
+     /* DISABLED
+     getTweet(function(data) {
+       socket.emit('tweet', {tweet: data});         
+     });
+     */
   })
 
   socket.on('time', function (data) {
@@ -81,5 +107,8 @@ sio.sockets.on('connection', function (socket) {
       socket.emit('earthquakes', { points: obj });
     })
   });
-
 });
+
+
+
+
