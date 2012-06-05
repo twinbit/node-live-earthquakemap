@@ -2,7 +2,7 @@ var app = require('./app').init(8000);
 var io  = require('socket.io');
 var sio = io.listen(app);
 var http = require('http');
-var twitter = require('tuiter');
+// var twitter = require('tuiter');
 
 
 // Twitter client
