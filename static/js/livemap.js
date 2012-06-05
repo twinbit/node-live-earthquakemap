@@ -42,6 +42,8 @@ $(document).ready(function() {
     var time = $this.attr('data-time');
 
     if (time) {
+      $('.progress').fadeIn();
+
       // remove geojson layers
       geojsonLayer.clearLayers();
       circles.clearLayers();
@@ -50,7 +52,7 @@ $(document).ready(function() {
       socket.emit('time', time);
     }
     else {
-/*      layer = last_time;
+/*    layer = last_time;
       coords = last_time.geometry.coordinates;
       lat = parseFloat(coords[1]),
       lng = parseFloat(coords[0]);
@@ -58,8 +60,8 @@ $(document).ready(function() {
       var latlng = new L.LatLng(lat, lng, true);
       */
       //map.panTo(modena);
-      map.setView(modena, 9, true).addLayer(cloudmade);
       //map.setZoom(4;
+      map.setView(modena, 9, true).addLayer(cloudmade);
     }
    });
 
@@ -92,12 +94,13 @@ $(document).ready(function() {
           // create circle aroud marker
           var circleLocation = new L.LatLng(coords.lat, coords.lng),
               circleOptions = {
-                  color: 'red',
+                  color: 'yellow',
                   fillColor: '#f03',
-                  fillOpacity: 0.5
+                  fillOpacity: 0.5,
+                  weight: -1
               };
           var circle = new L.Circle(circleLocation, 250 * properties.mag, circleOptions);
-         // circles.addLayer(circle);
+          //circles.addLayer(circle);
         }
       }
 
@@ -106,15 +109,14 @@ $(document).ready(function() {
    }
 
    socket.on('earthquakes', function (data) {
-     var points = data.points;
-
-     var geojsonMarkerOptions = {
-        radius: 5,
-        fillColor: "#ff7800",
-        color: "#000",
-        weight: 1,
-        opacity: 1,
-        fillOpacity: 0.8
+    var points = data.points;
+    var geojsonMarkerOptions = {
+      radius: 5,
+      fillColor: "#ff7800",
+      color: "#000",
+      weight: 1,
+      opacity: 1,
+      fillOpacity: 0.8
     };
 
     circles = new L.LayerGroup();
@@ -124,35 +126,41 @@ $(document).ready(function() {
         }
     });
 
-    geojsonLayer.on("featureparse", function(e) {
-       if (!last_time) {
-        last_time = e;
-       }
-       if (e.properties.time > last_time.properties.time) {
-        last_time = e;
-       }
+    geojsonLayer.on("featureparse", function(e) {      
+      // save last earthquake
+      if (e.layer._latlng !== 'undefined') {
+        if (!last_time) {
+         // deep object copy
+         // thanks to J.Resig: http://stackoverflow.com/a/122704/1436236
+         last_time = jQuery.extend(true, {}, e);
+        }
+        if (e.properties.time > last_time.properties.time) {
+         last_time = e;
+        }
+      }
 
-       if (e.properties && e.properties.place) {
-         // popup content
-         var date = new Date(e.properties.time * 1000);
-         e.layer.bindPopup('<strong>Place: </strong> ' + e.properties.place + '<br />' + 
-                           '<strong>Date: </strong> ' + date +  '<br />' + 
-                           '<strong>Magnitude: </strong>' + e.properties.mag  + '<br />' + 
-                           '<a target="_blank" href="http://earthquake.usgs.gov/' + e.properties.url + '"> Informations </a>'
-                           );
+      if (e.properties && e.properties.place) {
+        // popup content
+        var date = new Date(e.properties.time * 1000);
+        e.layer.bindPopup('<strong>Place: </strong> ' + e.properties.place + '<br />' + 
+                          '<strong>Date: </strong> ' + date +  '<br />' + 
+                          '<strong>Magnitude: </strong>' + e.properties.mag  + '<br />' + 
+                          '<a target="_blank" href="http://earthquake.usgs.gov/' + e.properties.url + '"> Informations </a>'
+                         );
 
-         if (e.properties) {
-           var mag = e.properties.mag;
-           var Styler = new setStyle(e.layer, e.properties);
-           e.layer = Styler.config();
-         }
-       }
+        if (e.properties) {
+          var mag = e.properties.mag;
+          var Styler = new setStyle(e.layer, e.properties);
+          e.layer = Styler.config();
+        }
+      }
      });
 
      geojsonLayer.addGeoJSON(points);
-
      map.addLayer(geojsonLayer);
-     map.addLayer(circles);
+     //map.addLayer(circles);
+     // deactivate progress bar
+     $('.progress').fadeOut();
    });
 
 

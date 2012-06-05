@@ -14,7 +14,8 @@ var twit = new twitter({
 });
 
 
-var getTweet = function(f, e) {
+// get twitter stream feed
+var getTweet = function(f) {
    twit.filter({track: ['#earthquake', '#terremoto']}, function(stream){
     stream.on('data', function(data){
       f(data);
@@ -92,10 +93,13 @@ var getFeed = function(data, f) {
 sio.sockets.on('connection', function (socket) {
   getFeed('all', function(obj) {
      socket.emit('earthquakes', { points: obj });
+
      // start sending tweets
+     /* DISABLED
      getTweet(function(data) {
        socket.emit('tweet', {tweet: data});         
      });
+     */
   })
 
   socket.on('time', function (data) {
