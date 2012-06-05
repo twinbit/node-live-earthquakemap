@@ -6,6 +6,7 @@ var http = require('http');
 
 
 // Twitter client
+/*
 var twit = new twitter({
   'consumer_key': 'GJmAMUrCRjG8dulCdqs0Q',
   'consumer_secret': 'LGNIXaskuQpwcvGi3rg3FjngQnIjb5OYeUzcYk7TE',
@@ -27,7 +28,7 @@ var getTweet = function(f) {
     });
   });
 }
-
+*/
 
 /* Application configuration */
 var locals = {
