@@ -102,17 +102,36 @@ $(document).ready(function() {
               };
           var circle = new L.Circle(circleLocation, 250 * properties.mag, circleOptions);
           //circles.addLayer(circle);
-        }
+        },
       }
-
       Styler.init();
       return Styler;
    }
 
+    // feature parser
+   function featureParse(feature, layer) {
+      if (feature.properties && feature.properties.place) {
+        // popup content
+        var date = new Date(feature.properties.time * 1000);
+        layer.bindPopup('<strong>Place: </strong> ' + feature.properties.place + '<br />' + 
+                          '<strong>Date: </strong> ' + date +  '<br />' + 
+                          '<strong>Magnitude: </strong>' + feature.properties.mag  + '<br />' + 
+                          '<a target="_blank" href="http://earthquake.usgs.gov/' + feature.properties.url + '"> Informations </a>'
+                         );
 
-   /* Earthquake updates */
+        if (feature.properties) {
+          var mag = feature.properties.mag;
+          var Styler = new setStyle(layer, feature.properties);
+          layer = Styler.config();
+        }
+      }
+   };
+
+   /* Earthquake handler */
    socket.on('earthquakes', function (data) {
     var points = data.points;
+    console.log(points);
+
     var geojsonMarkerOptions = {
       radius: 5,
       fillColor: "#ff7800",
@@ -124,43 +143,19 @@ $(document).ready(function() {
 
     circles = new L.LayerGroup();
     geojsonLayer = new L.GeoJSON(points, {
-        pointToLayer: function (latlng) {
+        style: function (feature) {
+          return feature.properties && feature.properties.style;
+        },
+        pointToLayer: function (feature, latlng) {
           return new L.CircleMarker(latlng, geojsonMarkerOptions);
-        }
+        },
+        onEachFeature: featureParse
     });
+      
+     //geojsonLayer.addGeoJSON(points);
+     //map.addLayer(geojsonLayer);
+     geojsonLayer.addTo(map);
 
-    geojsonLayer.on("featureparse", function(e) {      
-      // save last earthquake
-      if (e.layer._latlng !== 'undefined') {
-        if (!last_time) {
-         // deep object copy
-         // thanks to J.Resig: http://stackoverflow.com/a/122704/1436236
-         last_time = jQuery.extend(true, {}, e);
-        }
-        if (e.properties.time > last_time.properties.time) {
-         last_time = e;
-        }
-      }
-
-      if (e.properties && e.properties.place) {
-        // popup content
-        var date = new Date(e.properties.time * 1000);
-        e.layer.bindPopup('<strong>Place: </strong> ' + e.properties.place + '<br />' + 
-                          '<strong>Date: </strong> ' + date +  '<br />' + 
-                          '<strong>Magnitude: </strong>' + e.properties.mag  + '<br />' + 
-                          '<a target="_blank" href="http://earthquake.usgs.gov/' + e.properties.url + '"> Informations </a>'
-                         );
-
-        if (e.properties) {
-          var mag = e.properties.mag;
-          var Styler = new setStyle(e.layer, e.properties);
-          e.layer = Styler.config();
-        }
-      }
-     });
-
-     geojsonLayer.addGeoJSON(points);
-     map.addLayer(geojsonLayer);
      //map.addLayer(circles);
      // deactivate progress bar
      $('.progress').fadeOut();
